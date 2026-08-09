@@ -1,0 +1,1779 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>سیستم قرعه‌کشی | آکادمی کارنو</title>
+<link rel="preload" href="PeydaWebVF.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="logo-color.webp" as="image">
+<link rel="preload" href="logo-white.webp" as="image">
+<script>
+  (function(){
+    try {
+      var t = localStorage.getItem('raffle-theme');
+      if (t === 'dark' || t === 'light') document.documentElement.setAttribute('data-theme', t);
+    } catch (e) {}
+  })();
+</script>
+<style>
+  @font-face{
+    font-family:'Peyda';
+    src:url('PeydaWebVF.woff2') format('woff2');
+    font-weight:100 900;
+    font-style:normal;
+    font-display:swap;
+  }
+
+  :root{
+    --paper:#F6F4EF;
+    --paper-2:#EFEDE6;
+    --card:#FFFFFF;
+    --ink:#14171E;
+    --ink-2:#2B313C;
+    --muted:#646C7C;
+    --line:#E6E2D8;
+    --line-2:#D8D3C6;
+    --brand:#2d2c74;
+    --brand-deep:#1e1d4f;
+    --brand-tint:#eae9f2;
+    --cta:#ed1c24;
+    --cta-deep:#c8151c;
+    --cta-tint:#fde8e9;
+    --gold:#ed1c24;
+    --ok:#138A4A;
+    --ok-tint:#E6F4EC;
+    --shadow:0 1px 2px rgba(20,23,30,.04), 0 8px 24px rgba(20,23,30,.06);
+    --shadow-lg:0 24px 60px -20px rgba(45,44,116,.28), 0 12px 28px rgba(20,23,30,.10);
+    --radius:18px;
+    --radius-sm:12px;
+    --focus-ring:rgba(45,44,116,.12);
+  }
+
+  html[data-theme="dark"]{
+    color-scheme:dark;
+    --paper:#101118;
+    --paper-2:#161824;
+    --card:#1b1d2a;
+    --ink:#F3F0EA;
+    --ink-2:#E4E0D6;
+    --muted:#9AA3B5;
+    --line:#2C3040;
+    --line-2:#3A4054;
+    --brand:#fff;
+    --brand-deep:#d4d3fa;
+    --brand-tint:#25263a;
+    --cta:#ff4d53;
+    --cta-deep:#ed1c24;
+    --cta-tint:#3a1618;
+    --gold:#FFD27A;
+    --ok:#3dcf7a;
+    --ok-tint:#143322;
+    --shadow:0 1px 2px rgba(0,0,0,.28), 0 8px 24px rgba(0,0,0,.32);
+    --shadow-lg:0 24px 60px -20px rgba(0,0,0,.58), 0 12px 28px rgba(0,0,0,.38);
+    --focus-ring:rgba(184,183,240,.18);
+  }
+
+  *{ box-sizing:border-box; margin:0; padding:0; }
+  html,body{ margin:0; padding:0; }
+  body{
+    min-height:100vh;
+    background:
+      radial-gradient(900px 420px at 50% -6%, rgba(200,146,42,.18), transparent 58%),
+      radial-gradient(640px 340px at 8% 88%, rgba(237,28,36,.10), transparent 52%),
+      radial-gradient(700px 380px at 94% 78%, rgba(45,44,116,.14), transparent 55%),
+      var(--paper);
+    color:var(--ink);
+    font-family:'Peyda',sans-serif;
+    line-height:1.85;
+    -webkit-font-smoothing:antialiased;
+    text-rendering:optimizeLegibility;
+    direction:rtl;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    padding:28px 16px 72px;
+    position:relative;
+    overflow-x:clip;
+  }
+  html[data-theme="dark"] body{
+    background:
+      radial-gradient(900px 420px at 50% -6%, rgba(200,146,42,.16), transparent 58%),
+      radial-gradient(640px 340px at 8% 88%, rgba(237,28,36,.16), transparent 52%),
+      radial-gradient(700px 380px at 94% 78%, rgba(120,118,220,.20), transparent 55%),
+      var(--paper);
+  }
+  html[data-theme="dark"] header h1{ text-shadow:0 10px 40px rgba(184,183,240,.18); }
+  body::before{
+    content:"";
+    position:fixed; inset:0; pointer-events:none; z-index:0;
+    background-image:
+      radial-gradient(circle at 18% 22%, rgba(255,210,122,.35) 0 2px, transparent 2.5px),
+      radial-gradient(circle at 78% 18%, rgba(237,28,36,.28) 0 1.5px, transparent 2px),
+      radial-gradient(circle at 62% 72%, rgba(255,210,122,.28) 0 2px, transparent 2.5px),
+      radial-gradient(circle at 30% 80%, rgba(45,44,116,.22) 0 1.5px, transparent 2px),
+      radial-gradient(circle at 88% 58%, rgba(255,210,122,.22) 0 1.5px, transparent 2px);
+    animation: sparkle 4.5s ease-in-out infinite;
+  }
+  @keyframes sparkle{
+    0%,100%{ opacity:.55; }
+    50%{ opacity:1; }
+  }
+
+  .app{ width:100%; max-width:980px; position:relative; z-index:1; }
+
+  body.is-stage{
+    justify-content:center;
+    padding-top:28px;
+    padding-bottom:28px;
+  }
+  body.is-stage header{ margin-bottom:24px; }
+
+  header{ text-align:center; margin-bottom:32px; }
+  header .logo-wrap{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    gap:12px;
+    margin:0 auto 6px;
+  }
+  header .logo{
+    height:126px;
+    width:auto;
+    display:block;
+  }
+  header .logo-dark{ display:none; }
+  html[data-theme="dark"] header .logo-light{ display:none; }
+  html[data-theme="dark"] header .logo-dark{ display:block; }
+  header .brand-name{
+    text-align:center;
+    font-weight:800;
+    font-size:22px;
+    line-height:1.25;
+    color:var(--ink);
+  }
+  header .brand-name small{
+    display:block;
+    font-size:14px;
+    font-weight:500;
+    color:var(--muted);
+    letter-spacing:.3px;
+    margin-top:3px;
+  }
+  .eyebrow{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    font-size:13px;
+    font-weight:700;
+    color:var(--brand);
+    background:var(--brand-tint);
+    padding:6px 13px;
+    border-radius:50px;
+    margin-bottom:14px;
+  }
+  header .eyebrow{
+    margin:30px 0 40px;
+  }
+  .eyebrow .num{ color:var(--cta); }
+  header h1{
+    font-size:clamp(36px,6.4vw,68px);
+    font-weight:900;
+    line-height:1.18;
+    letter-spacing:-.6px;
+    margin:0;
+    text-shadow:0 10px 40px rgba(45,44,116,.12);
+  }
+  header h1 .hl{ color:var(--brand); }
+  header h1 .hl-gold{ color:#ed1c24; }
+
+  .panel{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:26px;
+    margin-bottom:18px;
+    box-shadow:var(--shadow);
+  }
+
+  label{
+    display:block;
+    font-weight:800;
+    font-size:15.5px;
+    margin-bottom:6px;
+    color:var(--ink);
+  }
+  .hint{
+    color:var(--muted);
+    font-size:13.5px;
+    margin:0 0 12px;
+    line-height:1.7;
+  }
+
+  textarea, input[type="text"]{
+    width:100%;
+    font-family:inherit;
+    font-size:15px;
+    border:1.5px solid var(--line);
+    border-radius:12px;
+    padding:13px 15px;
+    background:var(--paper);
+    color:var(--ink);
+    transition:border-color .2s, background .2s;
+    outline:none;
+    display:block;
+  }
+  textarea{
+    min-height:160px;
+    resize:vertical;
+    line-height:1.7;
+    direction:ltr;
+    text-align:left;
+  }
+  textarea:focus, input[type="text"]:focus, button:focus-visible{
+    border-color:var(--brand);
+    background:var(--card);
+    outline:none;
+    box-shadow:0 0 0 3px var(--focus-ring);
+  }
+  button:focus-visible{
+    outline:2px solid var(--brand);
+    outline-offset:2px;
+    box-shadow:none;
+  }
+
+  .count-badge{
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    margin-top:12px;
+    font-size:13.5px;
+    font-weight:600;
+    color:var(--ink-2);
+    background:var(--ok-tint);
+    color:var(--ok);
+    padding:6px 12px;
+    border-radius:50px;
+  }
+  .count-badge b{ font-weight:800; }
+
+  .prizes-list{ display:flex; flex-direction:column; gap:10px; margin-top:6px; }
+  .prize-row{ display:flex; gap:8px; align-items:center; }
+  .prize-row input{ flex:1; }
+  .icon-btn{
+    width:40px; height:40px;
+    border-radius:11px;
+    border:1.5px solid var(--line);
+    background:var(--paper);
+    color:var(--muted);
+    font-size:20px;
+    cursor:pointer;
+    display:flex; align-items:center; justify-content:center;
+    flex-shrink:0;
+    font-family:inherit;
+    transition:background .15s, color .15s, border-color .15s;
+  }
+  .icon-btn:hover{
+    background:var(--cta-tint);
+    color:var(--cta);
+    border-color:#f5b4b7;
+  }
+
+  .add-prize-btn{
+    margin-top:8px;
+    align-self:flex-start;
+    background:transparent;
+    border:1.5px dashed var(--line-2);
+    color:var(--muted);
+    border-radius:11px;
+    padding:9px 16px;
+    font-family:inherit;
+    font-size:13.5px;
+    font-weight:700;
+    cursor:pointer;
+    transition:color .15s, border-color .15s, background .15s;
+  }
+  .add-prize-btn:hover{
+    color:var(--brand);
+    border-color:var(--brand);
+    background:var(--brand-tint);
+  }
+
+  .btn{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:9px;
+    border:none;
+    border-radius:13px;
+    font-family:inherit;
+    font-weight:700;
+    font-size:16px;
+    cursor:pointer;
+    padding:15px 28px;
+    line-height:1;
+    white-space:nowrap;
+    transition:transform .18s, box-shadow .25s, background .2s, border-color .2s, color .15s;
+  }
+  .btn:active{ transform:translateY(0) scale(0.99); }
+  .btn:disabled{ opacity:.45; cursor:not-allowed; transform:none; box-shadow:none; }
+
+  .btn-primary{
+    background:linear-gradient(180deg,#ff3b42,var(--cta));
+    color:#fff;
+    box-shadow:0 12px 28px -8px rgba(237,28,36,.65), 0 0 0 1px rgba(255,255,255,.12) inset;
+    width:100%;
+    font-size:18px;
+    padding:18px 28px;
+  }
+  .btn-primary:hover:not(:disabled){
+    background:linear-gradient(180deg,var(--cta),var(--cta-deep));
+    transform:translateY(-2px);
+    box-shadow:0 18px 36px -10px rgba(237,28,36,.75);
+  }
+
+  .btn-secondary{
+    background:var(--ink);
+    color:var(--paper);
+    width:100%;
+  }
+  .btn-secondary:hover:not(:disabled){
+    background:var(--ink-2);
+    color:var(--paper);
+    transform:translateY(-2px);
+  }
+
+  .btn-ghost{
+    background:transparent;
+    border:1.5px solid var(--line-2);
+    color:var(--ink);
+    font-size:14px;
+    padding:11px 18px;
+    border-radius:11px;
+  }
+  .btn-ghost:hover{
+    border-color:var(--ink);
+    background:var(--card);
+  }
+
+  .error-box{
+    background:var(--cta-tint);
+    border:1px solid #f5b4b7;
+    color:var(--cta-deep);
+    border-radius:12px;
+    padding:13px 16px;
+    font-size:13.5px;
+    font-weight:700;
+    margin-top:14px;
+    display:none;
+  }
+
+  .toggle-row{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    font-size:14.5px;
+    font-weight:700;
+    color:var(--ink-2);
+    margin:4px 0 16px;
+    cursor:pointer;
+  }
+  .toggle-row input{
+    width:18px; height:18px; accent-color:var(--cta); cursor:pointer;
+  }
+  .ctrl-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:16px 18px;
+    margin-bottom:16px;
+  }
+  .ctrl{ min-width:0; }
+  .ctrl-meta{
+    display:flex;
+    justify-content:space-between;
+    align-items:baseline;
+    gap:10px;
+    margin-bottom:6px;
+    font-size:13.5px;
+    font-weight:700;
+    color:var(--ink-2);
+  }
+  .ctrl-meta b{ color:var(--brand); font-variant-numeric:tabular-nums; }
+  .ctrl input[type="range"]{
+    width:100%;
+    accent-color:var(--cta);
+    cursor:pointer;
+  }
+  .preview-btn{
+    background:transparent;
+    border:1.5px solid var(--line-2);
+    color:var(--ink);
+    border-radius:11px;
+    padding:10px 16px;
+    font-family:inherit;
+    font-size:14px;
+    font-weight:700;
+    cursor:pointer;
+    transition:border-color .15s, background .15s, color .15s;
+  }
+  .preview-btn:hover{ border-color:var(--brand); background:var(--brand-tint); color:var(--brand); }
+  .preview-row{ display:flex; flex-wrap:wrap; gap:8px; }
+  .confetti-section-title{
+    font-size:14px;
+    font-weight:800;
+    color:var(--ink-2);
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin:6px 0 12px;
+  }
+  .confetti-section-title::before{ content:""; display:block; width:4px; height:16px; background:var(--cta); border-radius:3px; }
+  .shape-row, .color-row{ margin-bottom:14px; }
+  .shape-pills{ display:flex; flex-wrap:wrap; gap:8px; margin-top:8px; }
+  .shape-pill{
+    display:inline-flex; align-items:center; gap:6px;
+    border:1.5px solid var(--line); border-radius:50px;
+    padding:6px 12px; font-size:13px; font-weight:700; cursor:pointer; background:var(--card);
+  }
+  .shape-pill input{ accent-color:var(--cta); }
+  .color-row input[type="text"]{ margin-top:8px; }
+  .burst-list{ display:flex; flex-direction:column; gap:10px; margin:0 0 16px; }
+  .burst-row{
+    background:var(--paper);
+    border:1px solid var(--line);
+    border-radius:12px;
+    padding:12px 14px;
+  }
+  .burst-row-head{
+    display:flex; align-items:center; justify-content:space-between; gap:10px;
+    margin-bottom:10px; font-size:13.5px; font-weight:800;
+  }
+  .burst-fields{
+    display:grid;
+    grid-template-columns:repeat(auto-fill, minmax(108px, 1fr));
+    gap:8px;
+  }
+  .burst-field label{
+    display:block; font-size:11.5px; color:var(--muted); font-weight:700; margin-bottom:4px;
+  }
+  .burst-field input{
+    width:100%; font-family:inherit; font-size:13.5px;
+    border:1.5px solid var(--line); border-radius:8px;
+    padding:7px 8px; background:var(--card); color:var(--ink);
+  }
+  .burst-hint{
+    font-size:12.5px;
+    color:var(--muted);
+    font-weight:500;
+    margin:0 0 12px;
+    line-height:1.6;
+  }
+
+  @media (max-width:640px){
+    .ctrl-grid{ grid-template-columns:1fr; }
+    .burst-fields{ grid-template-columns:1fr 1fr; }
+  }
+
+  /* ---------- STAGE VIEW ---------- */
+  .stage{ text-align:center; }
+  .progress-tag{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    background:var(--brand-tint);
+    color:var(--brand);
+    font-size:13px;
+    font-weight:700;
+    padding:6px 14px;
+    border-radius:50px;
+    margin-bottom:16px;
+  }
+  .prize-block{ margin-bottom:26px; }
+  .prize-label{
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    font-size:13px;
+    font-weight:800;
+    letter-spacing:.4px;
+    color:#8a6418;
+    background:linear-gradient(180deg,#FFE9B8,#F5D48A);
+    padding:6px 16px;
+    border-radius:50px;
+    margin-bottom:10px;
+    box-shadow:0 6px 18px -8px rgba(200,146,42,.7);
+  }
+  .prize-name{
+    font-size:clamp(28px,5.6vw,52px);
+    font-weight:900;
+    line-height:1.25;
+    color:var(--ink);
+    text-shadow:0 8px 30px rgba(200,146,42,.18);
+  }
+
+  .readout{
+    position:relative;
+    background:
+      radial-gradient(circle at 50% 0%, rgba(200,146,42,.18), transparent 46%),
+      linear-gradient(150deg,#0c1018,#1a2233 55%,#14101c);
+    border:1px solid #2a3142;
+    border-radius:26px;
+    padding:52px 22px 48px;
+    margin-bottom:22px;
+    overflow:hidden;
+    box-shadow:0 30px 70px -24px rgba(20,23,30,.55), 0 0 0 1px rgba(255,210,122,.08) inset;
+    transition:box-shadow .4s, border-color .4s;
+  }
+  .readout::before{
+    content:"";
+    position:absolute; inset:0;
+    background-image:
+      linear-gradient(rgba(255,255,255,.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,.05) 1px, transparent 1px);
+    background-size:22px 22px;
+    pointer-events:none;
+  }
+  .readout::after{
+    content:"";
+    position:absolute;
+    top:-70px; left:50%;
+    width:280px; height:220px;
+    transform:translateX(-50%);
+    background:radial-gradient(circle, rgba(255,210,122,.28), transparent 70%);
+    pointer-events:none;
+  }
+  .readout.winner{
+    border-color:rgba(200,146,42,.7);
+    box-shadow:
+      0 0 0 2px rgba(200,146,42,.28),
+      0 30px 80px -20px rgba(200,146,42,.45),
+      0 0 80px rgba(237,28,36,.18);
+    animation: winnerGlow 2.2s ease-in-out infinite;
+  }
+  @keyframes winnerGlow{
+    0%,100%{ box-shadow:0 0 0 2px rgba(200,146,42,.28), 0 30px 80px -20px rgba(200,146,42,.4), 0 0 70px rgba(237,28,36,.14); }
+    50%{ box-shadow:0 0 0 3px rgba(255,210,122,.45), 0 34px 90px -18px rgba(200,146,42,.55), 0 0 100px rgba(237,28,36,.28); }
+  }
+
+  .reveal-eye{
+    position:absolute;
+    top:10px;
+    left:10px;
+    z-index:4;
+    width:22px;
+    height:22px;
+    padding:0;
+    border:none;
+    border-radius:6px;
+    background:transparent;
+    color:rgba(255,255,255,.14);
+    cursor:pointer;
+    display:grid;
+    place-items:center;
+    transition:color .2s, background .2s;
+  }
+  .reveal-eye svg{ width:15px; height:15px; display:block; }
+  .reveal-eye:hover,
+  .reveal-eye:focus-visible{
+    color:rgba(255,255,255,.72);
+    background:rgba(255,255,255,.08);
+    outline:none;
+  }
+  .reveal-eye.is-open{ color:rgba(255,255,255,.28); }
+
+  .theme-toggle{
+    position:fixed;
+    top:12px;
+    left:12px;
+    z-index:80;
+    width:22px;
+    height:22px;
+    padding:0;
+    border:none;
+    border-radius:6px;
+    background:transparent;
+    color:rgba(20,23,30,.12);
+    cursor:pointer;
+    display:grid;
+    place-items:center;
+    transition:color .2s, background .2s;
+  }
+  html[data-theme="dark"] .theme-toggle{ color:rgba(255,255,255,.12); }
+  .theme-toggle svg{ width:15px; height:15px; display:block; }
+  .theme-toggle:hover,
+  .theme-toggle:focus-visible{
+    color:rgba(20,23,30,.7);
+    background:rgba(20,23,30,.06);
+    outline:none;
+  }
+  html[data-theme="dark"] .theme-toggle:hover,
+  html[data-theme="dark"] .theme-toggle:focus-visible{
+    color:rgba(255,255,255,.72);
+    background:rgba(255,255,255,.08);
+  }
+
+  .status-dot{
+    width:9px; height:9px;
+    border-radius:50%;
+    display:inline-block;
+    margin-left:8px;
+    background:var(--gold);
+    box-shadow:0 0 0 0 rgba(200,146,42,.55);
+    transition:background .2s, box-shadow .2s;
+    flex:none;
+  }
+  .status-dot.live{
+    background:var(--cta);
+    animation:pulse 2s infinite;
+  }
+  .status-dot.done{
+    background:var(--ok);
+    box-shadow:0 0 12px rgba(19,138,74,.55);
+    animation:none;
+  }
+  @keyframes pulse{
+    0%{ box-shadow:0 0 0 0 rgba(237,28,36,.6); }
+    70%{ box-shadow:0 0 0 9px rgba(237,28,36,0); }
+    100%{ box-shadow:0 0 0 0 rgba(237,28,36,0); }
+  }
+
+  .status-row{
+    font-size:13px;
+    color:rgba(255,255,255,.62);
+    margin-bottom:18px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    position:relative;
+    z-index:1;
+    font-weight:600;
+  }
+
+  .digits{
+    font-family:'Peyda',sans-serif;
+    font-weight:900;
+    font-size:clamp(44px,11vw,92px);
+    letter-spacing:4px;
+    color:#FFD27A;
+    text-shadow:0 0 22px rgba(255,210,122,.35);
+    direction:ltr;
+    transition:color .25s, text-shadow .25s, transform .35s;
+    word-break:break-all;
+    position:relative;
+    z-index:3;
+    line-height:1.15;
+  }
+  .digits.revealed{
+    color:#FFE7A8;
+    text-shadow:0 0 28px rgba(255,210,122,.7), 0 0 60px rgba(237,28,36,.28);
+    animation: digitPop .55s cubic-bezier(.2,.85,.2,1);
+  }
+  .digits.idle{
+    color:rgba(255,255,255,.22);
+    text-shadow:none;
+  }
+  @keyframes digitPop{
+    0%{ transform:scale(.86); opacity:.4; }
+    70%{ transform:scale(1.06); }
+    100%{ transform:scale(1); opacity:1; }
+  }
+
+  .stage-actions{ display:flex; flex-direction:column; gap:10px; }
+
+  .winners-log{
+    margin-top:28px;
+    text-align:right;
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:22px 24px;
+    box-shadow:var(--shadow);
+  }
+  .winners-log h3{
+    font-size:15px;
+    color:var(--ink);
+    margin:0 0 14px;
+    font-weight:800;
+    display:flex;
+    align-items:center;
+    gap:10px;
+  }
+  .winners-log h3::before{
+    content:"";
+    display:block;
+    width:4px;
+    height:16px;
+    background:var(--cta);
+    border-radius:3px;
+  }
+  .winner-item{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    background:var(--paper);
+    border:1px solid var(--line);
+    border-radius:12px;
+    padding:12px 16px;
+    margin-bottom:8px;
+    font-size:14.5px;
+  }
+  .winner-item:last-child{ margin-bottom:0; }
+  .winner-item .num{
+    color:var(--ok);
+    font-weight:800;
+    direction:ltr;
+    background:var(--ok-tint);
+    padding:4px 10px;
+    border-radius:50px;
+    font-size:14px;
+  }
+  .winner-item .label{ color:var(--ink-2); font-weight:700; }
+
+  .remaining-note{
+    font-size:13.5px;
+    color:var(--muted);
+    margin-top:16px;
+    font-weight:600;
+  }
+
+  /* ---------- SUMMARY VIEW ---------- */
+  .summary-card{ text-align:center; position:relative; overflow:hidden; }
+  .summary-card::before{
+    content:"";
+    position:absolute; inset:0;
+    background:radial-gradient(700px 280px at 50% -20%, rgba(45,44,116,.08), transparent 65%);
+    pointer-events:none;
+  }
+  .summary-card > *{ position:relative; z-index:1; }
+  .summary-card h2{
+    font-size:clamp(24px,4vw,34px);
+    font-weight:900;
+    margin:0 0 6px;
+    line-height:1.3;
+  }
+  .summary-card .lead{
+    color:var(--muted);
+    font-size:15px;
+    margin-bottom:22px;
+  }
+  .summary-list{ display:flex; flex-direction:column; gap:10px; margin:0 0 24px; }
+  .summary-row{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    background:var(--paper);
+    border:1px solid var(--line);
+    border-radius:14px;
+    padding:16px 18px;
+    text-align:right;
+  }
+  .summary-row .prize{ font-weight:800; color:var(--ink); }
+  .summary-row .num{
+    font-size:17px;
+    font-weight:900;
+    color:var(--brand);
+    background:var(--brand-tint);
+    padding:6px 12px;
+    border-radius:50px;
+    direction:ltr;
+  }
+
+  [hidden]{ display:none !important; }
+
+  @media (max-width:640px){
+    body{ padding:22px 14px 56px; }
+    .panel{ padding:20px 18px; }
+    header .logo{ height:96px; }
+    header h1{ font-size:32px; }
+    .prize-name{ font-size:28px; }
+    .digits{ font-size:36px; letter-spacing:2px; }
+    .readout{ padding:40px 14px 36px; }
+    .btn-primary{ font-size:16px; padding:16px 22px; }
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    .status-dot.live,
+    .readout.winner,
+    .digits.revealed,
+    body::before{ animation:none; }
+    .btn, .btn-primary:hover:not(:disabled), .btn-secondary:hover:not(:disabled){
+      transition:none;
+      transform:none;
+    }
+  }
+
+  p#remainingNote {
+    display: none;
+}
+</style>
+</head>
+<body>
+
+<button type="button" class="theme-toggle" id="themeToggleBtn" aria-label="تغییر تم" title="">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 14.5A8.5 8.5 0 1110.5 3 7 7 0 0021 14.5z"/></svg>
+</button>
+
+<div class="app">
+  <header>
+    <div class="logo-wrap">
+      <img class="logo logo-light" src="logo-color.webp" alt="آکادمی کارنو" height="126">
+      <img class="logo logo-dark" src="logo-white.webp" alt="آکادمی کارنو" height="126">
+      <span class="brand-name">آکادمی کارنو<small>مرجع تخصصی برق خودرو ایران</small></span>
+    </div>
+    <span class="eyebrow"><span class="num">●</span> قرعه‌کشی زنده</span>
+    <h1>قرعه‌کشی <span class="hl-gold">بزرگ</span> <span class="hl">آکادمی کارنو</span></h1>
+  </header>
+
+  <!-- ===================== SETUP VIEW ===================== -->
+  <main id="setupView">
+
+    <div class="panel">
+      <label for="numbersInput">شماره‌های شرکت‌کننده</label>
+      <p class="hint" id="srcHint">شماره‌ها از فایل <b>src.txt</b> کنار این صفحه خوانده می‌شوند.</p>
+      <div class="preview-row" id="folderRow" style="margin-bottom:12px">
+        <button type="button" class="preview-btn" id="connectFolderBtn">اتصال به پوشه فایل‌ها</button>
+        <input type="file" id="srcFileInput" accept=".txt,text/plain" hidden>
+      </div>
+      <textarea id="numbersInput" placeholder="در حال خواندن src.txt..."></textarea>
+      <div class="count-badge">تعداد شماره‌های شناسایی‌شده: <b id="numCount">۰</b></div>
+    </div>
+
+    <div class="panel">
+      <label>لیست جوایز (به ترتیب کشیده می‌شوند)</label>
+      <p class="hint">می‌توانید نام جوایز را ویرایش کنید یا با دکمه زیر جایزه جدید اضافه کنید.</p>
+      <div class="prizes-list" id="prizesList"></div>
+      <button class="add-prize-btn" id="addPrizeBtn">+ افزودن جایزه</button>
+    </div>
+
+    <div class="panel">
+      <label>افکت confetti بعد از اعلام برنده</label>
+      <p class="hint">انفجارهای دایره‌ای در نقاط مختلف صفحه. تنظیمات در فایل <b>confetti.json</b> کنار همین صفحه ذخیره می‌شود.</p>
+      <label class="toggle-row">
+        <input type="checkbox" id="confettiEnabled" checked>
+        افکت فعال باشد
+      </label>
+      <div class="ctrl-grid">
+        <div class="ctrl">
+          <div class="ctrl-meta"><span>تعداد ذرات پایه</span><b id="confettiCountVal">۲۰۰</b></div>
+          <input type="range" id="confettiCount" min="40" max="800" step="10" value="200">
+        </div>
+        <div class="ctrl">
+          <div class="ctrl-meta"><span>فاصله زمانی بین انفجارها</span><b id="confettiStaggerVal">۴۵۰ms</b></div>
+          <input type="range" id="confettiStagger" min="0" max="1500" step="50" value="450">
+        </div>
+        <div class="ctrl">
+          <div class="ctrl-meta"><span>گرانش</span><b id="confettiGravityVal">۰.۸</b></div>
+          <input type="range" id="confettiGravity" min="0.2" max="2" step="0.1" value="0.8">
+        </div>
+        <div class="ctrl">
+          <div class="ctrl-meta"><span>دوام (ticks)</span><b id="confettiTicksVal">۳۰۰</b></div>
+          <input type="range" id="confettiTicks" min="80" max="800" step="10" value="300">
+        </div>
+        <div class="ctrl">
+          <div class="ctrl-meta"><span>اندازه کلی</span><b id="confettiScalarVal">۱</b></div>
+          <input type="range" id="confettiScalar" min="0.4" max="2" step="0.1" value="1">
+        </div>
+      </div>
+      <div class="shape-row">
+        <span class="ctrl-meta"><span>شکل ذرات</span></span>
+        <div class="shape-pills">
+          <label class="shape-pill"><input type="checkbox" class="confetti-shape" value="square" checked> مربع</label>
+          <label class="shape-pill"><input type="checkbox" class="confetti-shape" value="circle" checked> دایره</label>
+          <label class="shape-pill"><input type="checkbox" class="confetti-shape" value="star"> ستاره</label>
+          <label class="shape-pill"><input type="checkbox" class="confetti-shape" value="heart"> قلب</label>
+        </div>
+      </div>
+      <div class="color-row">
+        <span class="ctrl-meta"><span>رنگ‌ها</span></span>
+        <input type="text" id="confettiColors" value="#ed1c24, #C8922A, #FFD27A, #2d2c74, #ffffff, #ff6b70">
+      </div>
+      <div class="confetti-section-title">نقاط انفجار</div>
+      <p class="burst-hint">Spread روی ۳۶۰ یعنی انفجار کاملاً دایره‌ای. مختصات ۰ تا ۱ است: افقی ۰ = چپ صفحه، ۱ = راست / عمودی ۰ = بالای صفحه، ۱ = پایین.</p>
+      <div class="burst-list" id="confettiBursts"></div>
+      <div class="preview-row">
+        <button type="button" class="preview-btn" id="confettiPreviewBtn">پیش‌نمایش افکت</button>
+        <button type="button" class="preview-btn" id="confettiAddBurstBtn">+ افزودن انفجار</button>
+        <button type="button" class="preview-btn" id="confettiResetBtn">بازگشت به الگوی دایره‌ای</button>
+      </div>
+    </div>
+
+    <button class="btn btn-primary" id="startShowBtn">شروع نمایش قرعه‌کشی</button>
+    <div class="error-box" id="setupError"></div>
+  </main>
+
+  <!-- ===================== STAGE VIEW ===================== -->
+  <main id="stageView" class="stage" hidden>
+    <div class="progress-tag" id="progressTag" hidden>جایزه ۱ از ۴</div>
+    <div class="prize-block">
+      <span class="prize-label">جایزه</span>
+      <div class="prize-name" id="currentPrizeName">—</div>
+    </div>
+
+    <div class="readout" id="readoutBox">
+      <button type="button" class="reveal-eye" id="revealEyeBtn" hidden aria-label="نمایش کامل شماره" title="">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+      </button>
+      <div class="status-row">
+        <span class="status-dot" id="statusDot"></span>
+        <span id="statusText">آماده برای شروع</span>
+      </div>
+      <div class="digits idle" id="digitsDisplay" aria-live="polite">— — — —</div>
+    </div>
+
+    <div class="stage-actions">
+      <button class="btn btn-primary" id="drawBtn">شروع قرعه‌کشی</button>
+      <button class="btn btn-secondary" id="nextBtn" hidden>ثبت برنده و رفتن به جایزه بعدی</button>
+    </div>
+
+    <p class="remaining-note" id="remainingNote"></p>
+
+    <div class="winners-log" id="winnersLog" hidden>
+      <h3>برندگان تا این لحظه</h3>
+      <div id="winnersLogList"></div>
+    </div>
+  </main>
+
+  <!-- ===================== SUMMARY VIEW ===================== -->
+  <main id="summaryView" hidden>
+    <div class="panel summary-card">
+      <span class="eyebrow"><span class="num">●</span> نتیجه نهایی</span>
+      <h2>برندگان قرعه‌کشی مشخص شدند</h2>
+      <p class="lead">لیست کامل جوایز و شماره‌های برنده</p>
+      <div class="summary-list" id="summaryList"></div>
+      <button class="btn btn-secondary" id="restartBtn">شروع یک قرعه‌کشی جدید</button>
+    </div>
+  </main>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@tsparticles/confetti@3.9.1/tsparticles.confetti.bundle.min.js"></script>
+<script>
+(function(){
+  "use strict";
+
+  // ---------- State ----------
+  var pool = [];          // remaining eligible numbers
+  var prizes = [];        // prize names, in draw order
+  var currentPrizeIndex = 0;
+  var winners = [];       // {prize, number}
+  var drawing = false;
+  var pendingWinner = null;
+  var numberUnmasked = false;
+
+  // ---------- Elements ----------
+  var numbersInput = document.getElementById('numbersInput');
+  var numCount = document.getElementById('numCount');
+  var srcHint = document.getElementById('srcHint');
+  var folderRow = document.getElementById('folderRow');
+  var connectFolderBtn = document.getElementById('connectFolderBtn');
+  var srcFileInput = document.getElementById('srcFileInput');
+  var themeToggleBtn = document.getElementById('themeToggleBtn');
+  var prizesList = document.getElementById('prizesList');
+  var addPrizeBtn = document.getElementById('addPrizeBtn');
+  var startShowBtn = document.getElementById('startShowBtn');
+  var setupError = document.getElementById('setupError');
+
+  var setupView = document.getElementById('setupView');
+  var stageView = document.getElementById('stageView');
+  var summaryView = document.getElementById('summaryView');
+
+  var progressTag = document.getElementById('progressTag');
+  var currentPrizeName = document.getElementById('currentPrizeName');
+  var statusDot = document.getElementById('statusDot');
+  var statusText = document.getElementById('statusText');
+  var digitsDisplay = document.getElementById('digitsDisplay');
+  var readoutBox = document.getElementById('readoutBox');
+  var revealEyeBtn = document.getElementById('revealEyeBtn');
+  var drawBtn = document.getElementById('drawBtn');
+  var nextBtn = document.getElementById('nextBtn');
+  var remainingNote = document.getElementById('remainingNote');
+  var winnersLog = document.getElementById('winnersLog');
+  var winnersLogList = document.getElementById('winnersLogList');
+
+  var summaryList = document.getElementById('summaryList');
+  var restartBtn = document.getElementById('restartBtn');
+
+  var confettiEnabled = document.getElementById('confettiEnabled');
+  var confettiCount = document.getElementById('confettiCount');
+  var confettiStagger = document.getElementById('confettiStagger');
+  var confettiGravity = document.getElementById('confettiGravity');
+  var confettiTicks = document.getElementById('confettiTicks');
+  var confettiScalar = document.getElementById('confettiScalar');
+  var confettiColors = document.getElementById('confettiColors');
+  var confettiCountVal = document.getElementById('confettiCountVal');
+  var confettiStaggerVal = document.getElementById('confettiStaggerVal');
+  var confettiGravityVal = document.getElementById('confettiGravityVal');
+  var confettiTicksVal = document.getElementById('confettiTicksVal');
+  var confettiScalarVal = document.getElementById('confettiScalarVal');
+  var confettiPreviewBtn = document.getElementById('confettiPreviewBtn');
+  var confettiAddBurstBtn = document.getElementById('confettiAddBurstBtn');
+  var confettiResetBtn = document.getElementById('confettiResetBtn');
+  var confettiBurstsEl = document.getElementById('confettiBursts');
+  var confettiTimers = [];
+  var confettiSaveTimer = null;
+  var confettiHydrating = false;
+  var dirHandle = null;
+  var currentTheme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
+
+  var THEME_MOON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 14.5A8.5 8.5 0 1110.5 3 7 7 0 0021 14.5z"/></svg>';
+  var THEME_SUN = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>';
+
+  function applyTheme(theme, persist){
+    currentTheme = theme === 'dark' ? 'dark' : 'light';
+    document.documentElement.setAttribute('data-theme', currentTheme);
+    if (themeToggleBtn){
+      themeToggleBtn.innerHTML = currentTheme === 'dark' ? THEME_SUN : THEME_MOON;
+      themeToggleBtn.setAttribute('aria-label', currentTheme === 'dark' ? 'تم روشن' : 'تم تاریک');
+    }
+    try { localStorage.setItem('raffle-theme', currentTheme); } catch (e) {}
+    if (persist !== false) scheduleConfettiSave();
+  }
+
+  function toggleTheme(){
+    applyTheme(currentTheme === 'dark' ? 'light' : 'dark');
+  }
+
+  var maskMiddle = function(str){
+    var s = String(str);
+    if (s.length <= 3) return s;
+    var start = Math.floor((s.length - 3) / 2);
+    return s.slice(0, start) + '***' + s.slice(start + 3);
+  };
+
+  // Censor 5th, 6th and 7th characters (1-based) — e.g. 0912***4567
+  var maskDigits567 = function(str){
+    var s = String(str);
+    if (s.length < 7) return maskMiddle(s);
+    return s.slice(0, 3) + '***' + s.slice(6);
+  };
+
+  var EYE_OPEN = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>';
+  var EYE_OFF = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>';
+
+  function setEyeIcon(open){
+    revealEyeBtn.innerHTML = open ? EYE_OFF : EYE_OPEN;
+    revealEyeBtn.classList.toggle('is-open', open);
+    revealEyeBtn.setAttribute('aria-label', open ? 'سانسور شماره' : 'نمایش کامل شماره');
+  }
+
+  function showWinnerNumber(){
+    if (!pendingWinner) return;
+    digitsDisplay.textContent = numberUnmasked
+      ? pendingWinner.number
+      : maskDigits567(pendingWinner.number);
+    setEyeIcon(numberUnmasked);
+  }
+
+  var DEFAULT_CONFETTI_BURSTS = [
+    { enabled: true, ratio: 0.40, spread: 360, startVelocity: 48, decay: 0.91, scalar: 1, originX: 0.50, originY: 0.42 },
+    { enabled: true, ratio: 0.28, spread: 360, startVelocity: 42, decay: 0.90, scalar: 0.9, originX: 0.18, originY: 0.30 },
+    { enabled: true, ratio: 0.28, spread: 360, startVelocity: 42, decay: 0.90, scalar: 0.9, originX: 0.82, originY: 0.30 },
+    { enabled: true, ratio: 0.32, spread: 360, startVelocity: 50, decay: 0.92, scalar: 1.05, originX: 0.28, originY: 0.62 },
+    { enabled: true, ratio: 0.32, spread: 360, startVelocity: 50, decay: 0.92, scalar: 1.05, originX: 0.72, originY: 0.62 },
+    { enabled: true, ratio: 0.45, spread: 360, startVelocity: 55, decay: 0.91, scalar: 1.15, originX: 0.50, originY: 0.20 }
+  ];
+  var DEFAULT_BURST = { enabled: true, ratio: 0.3, spread: 360, startVelocity: 45, decay: 0.91, scalar: 1, originX: 0.5, originY: 0.5 };
+
+  function parseOptionalNumber(value){
+    if (value === '' || value == null) return null;
+    var n = parseFloat(value);
+    return isNaN(n) ? null : n;
+  }
+
+  function formatSetting(value){
+    var s = String(value);
+    if (s.indexOf('.') !== -1) s = s.replace(/\.0+$/, '').replace(/(\.\d*?)0+$/, '$1');
+    return toPersianDigits(s);
+  }
+
+  function burstFieldValue(value){
+    return value === '' || value == null ? '' : value;
+  }
+
+  function renderBurstRows(bursts){
+    if (!confettiBurstsEl) return;
+    confettiBurstsEl.innerHTML = '';
+    bursts.forEach(function(burst, idx){
+      var row = document.createElement('div');
+      row.className = 'burst-row';
+      row.innerHTML =
+        '<div class="burst-row-head">' +
+          '<label class="toggle-row" style="margin:0">' +
+            '<input type="checkbox" class="burst-enabled"' + (burst.enabled ? ' checked' : '') + '>' +
+            'انفجار ' + toPersianDigits(idx + 1) +
+          '</label>' +
+          '<button type="button" class="icon-btn burst-remove" title="حذف این انفجار">حذف</button>' +
+        '</div>' +
+        '<div class="burst-fields">' +
+          '<div class="burst-field"><label>نسبت ذرات</label><input type="number" class="burst-ratio" min="0.05" max="1" step="0.05" value="' + burst.ratio + '"></div>' +
+          '<div class="burst-field"><label>Spread</label><input type="number" class="burst-spread" min="0" max="360" step="1" value="' + burst.spread + '"></div>' +
+          '<div class="burst-field"><label>سرعت شروع</label><input type="number" class="burst-velocity" min="1" max="120" step="1" placeholder="پیش‌فرض" value="' + burstFieldValue(burst.startVelocity) + '"></div>' +
+          '<div class="burst-field"><label>Decay</label><input type="number" class="burst-decay" min="0.7" max="0.99" step="0.01" placeholder="پیش‌فرض" value="' + burstFieldValue(burst.decay) + '"></div>' +
+          '<div class="burst-field"><label>اندازه</label><input type="number" class="burst-scalar" min="0.3" max="2" step="0.1" placeholder="پیش‌فرض" value="' + burstFieldValue(burst.scalar) + '"></div>' +
+          '<div class="burst-field"><label>افقی (X)</label><input type="number" class="burst-x" min="0" max="1" step="0.05" value="' + (burst.originX != null ? burst.originX : 0.5) + '"></div>' +
+          '<div class="burst-field"><label>عمودی (Y)</label><input type="number" class="burst-y" min="0" max="1" step="0.05" value="' + (burst.originY != null ? burst.originY : 0.5) + '"></div>' +
+        '</div>';
+      var removeBtn = row.querySelector('.burst-remove');
+      removeBtn.addEventListener('click', function(){
+        var current = readBurstSettings();
+        if (current.length <= 1) return;
+        current.splice(idx, 1);
+        renderBurstRows(current);
+        scheduleConfettiSave();
+      });
+      Array.prototype.forEach.call(row.querySelectorAll('input'), function(el){
+        el.addEventListener('input', scheduleConfettiSave);
+        el.addEventListener('change', scheduleConfettiSave);
+      });
+      confettiBurstsEl.appendChild(row);
+    });
+  }
+
+  function readBurstSettings(){
+    if (!confettiBurstsEl) return DEFAULT_CONFETTI_BURSTS.map(function(b){ return Object.assign({}, b); });
+    return Array.prototype.map.call(confettiBurstsEl.querySelectorAll('.burst-row'), function(row){
+      return {
+        enabled: !!row.querySelector('.burst-enabled').checked,
+        ratio: parseFloat(row.querySelector('.burst-ratio').value) || 0,
+        spread: parseFloat(row.querySelector('.burst-spread').value) || 0,
+        startVelocity: parseOptionalNumber(row.querySelector('.burst-velocity').value),
+        decay: parseOptionalNumber(row.querySelector('.burst-decay').value),
+        scalar: parseOptionalNumber(row.querySelector('.burst-scalar').value),
+        originX: parseOptionalNumber(row.querySelector('.burst-x').value),
+        originY: parseOptionalNumber(row.querySelector('.burst-y').value)
+      };
+    });
+  }
+
+  function readConfettiSettings(){
+    var shapes = Array.prototype.map.call(document.querySelectorAll('.confetti-shape:checked'), function(el){
+      return el.value;
+    });
+    var colors = (confettiColors && confettiColors.value || '')
+      .split(',')
+      .map(function(c){ return c.trim(); })
+      .filter(Boolean);
+
+    return {
+      theme: currentTheme,
+      enabled: !!(confettiEnabled && confettiEnabled.checked),
+      count: confettiCount ? parseInt(confettiCount.value, 10) : 200,
+      stagger: confettiStagger ? parseInt(confettiStagger.value, 10) : 450,
+      gravity: confettiGravity ? parseFloat(confettiGravity.value) : 0.8,
+      ticks: confettiTicks ? parseInt(confettiTicks.value, 10) : 300,
+      scalar: confettiScalar ? parseFloat(confettiScalar.value) : 1,
+      colors: colors.length ? colors : ['#ed1c24','#C8922A','#FFD27A','#2d2c74','#ffffff'],
+      shapes: shapes.length ? shapes : ['square','circle'],
+      bursts: readBurstSettings()
+    };
+  }
+
+  function applyConfettiSettings(s){
+    if (!s || typeof s !== 'object') return;
+    confettiHydrating = true;
+    if (s.theme === 'dark' || s.theme === 'light') applyTheme(s.theme, false);
+    if (confettiEnabled) confettiEnabled.checked = s.enabled !== false;
+    if (confettiCount && s.count != null) confettiCount.value = String(s.count);
+    if (confettiStagger && s.stagger != null) confettiStagger.value = String(s.stagger);
+    if (confettiGravity && s.gravity != null) confettiGravity.value = String(s.gravity);
+    if (confettiTicks && s.ticks != null) confettiTicks.value = String(s.ticks);
+    if (confettiScalar && s.scalar != null) confettiScalar.value = String(s.scalar);
+    if (Array.isArray(s.colors)){
+      if (confettiColors) confettiColors.value = s.colors.join(', ');
+    } else if (typeof s.colors === 'string' && confettiColors){
+      confettiColors.value = s.colors;
+    }
+    if (Array.isArray(s.shapes)){
+      document.querySelectorAll('.confetti-shape').forEach(function(el){
+        el.checked = s.shapes.indexOf(el.value) !== -1;
+      });
+    }
+    if (Array.isArray(s.bursts) && s.bursts.length){
+      renderBurstRows(s.bursts);
+    }
+    updateConfettiLabels();
+    confettiHydrating = false;
+  }
+
+  function scheduleConfettiSave(){
+    if (confettiHydrating) return;
+    clearTimeout(confettiSaveTimer);
+    confettiSaveTimer = setTimeout(saveConfettiSettings, 450);
+  }
+
+  function idbOpen(){
+    return new Promise(function(resolve, reject){
+      if (!window.indexedDB) return resolve(null);
+      var open = indexedDB.open('carno-raffle', 1);
+      open.onupgradeneeded = function(){
+        if (!open.result.objectStoreNames.contains('handles')){
+          open.result.createObjectStore('handles');
+        }
+      };
+      open.onsuccess = function(){ resolve(open.result); };
+      open.onerror = function(){ resolve(null); };
+    });
+  }
+
+  function idbGetHandle(){
+    return idbOpen().then(function(db){
+      if (!db) return null;
+      return new Promise(function(resolve){
+        try {
+          var req = db.transaction('handles', 'readonly').objectStore('handles').get('dir');
+          req.onsuccess = function(){ resolve(req.result || null); };
+          req.onerror = function(){ resolve(null); };
+        } catch (e) { resolve(null); }
+      });
+    });
+  }
+
+  function idbSetHandle(handle){
+    return idbOpen().then(function(db){
+      if (!db) return;
+      return new Promise(function(resolve){
+        try {
+          var tx = db.transaction('handles', 'readwrite');
+          tx.objectStore('handles').put(handle, 'dir');
+          tx.oncomplete = function(){ resolve(); };
+          tx.onerror = function(){ resolve(); };
+        } catch (e) { resolve(); }
+      });
+    });
+  }
+
+  function readDirFile(name){
+    if (!dirHandle) return Promise.reject(new Error('no dir'));
+    return dirHandle.getFileHandle(name)
+      .then(function(fh){ return fh.getFile(); })
+      .then(function(file){ return file.text(); });
+  }
+
+  function writeDirFile(name, text){
+    if (!dirHandle) return Promise.resolve(false);
+    return dirHandle.getFileHandle(name, { create: true })
+      .then(function(fh){ return fh.createWritable(); })
+      .then(function(writable){
+        return writable.write(text).then(function(){ return writable.close(); });
+      })
+      .then(function(){ return true; })
+      .catch(function(){ return false; });
+  }
+
+  function applySrcText(text){
+    numbersInput.value = String(text || '').replace(/\r\n/g, '\n').replace(/\s+$/, '');
+    refreshNumberCount();
+    var n = parseNumbers(numbersInput.value).length;
+    setSrcHint('از فایل <b>src.txt</b> خوانده شد — ' + toPersianDigits(n) + ' شماره.', true);
+  }
+
+  function applyCachedConfetti(){
+    try {
+      var cached = localStorage.getItem('raffle-confetti');
+      if (cached) applyConfettiSettings(JSON.parse(cached));
+    } catch (e) {}
+  }
+
+  function loadFromDirectory(handle){
+    dirHandle = handle;
+    return readDirFile('confetti.json')
+      .then(function(text){
+        try { applyConfettiSettings(JSON.parse(text)); } catch (e) { applyCachedConfetti(); }
+      })
+      .catch(applyCachedConfetti)
+      .then(function(){ return readDirFile('src.txt'); })
+      .then(function(text){
+        applySrcText(text);
+        if (folderRow) folderRow.hidden = true;
+      })
+      .catch(function(){
+        setSrcHint('پوشه وصل شد، اما <b>src.txt</b> در آن نبود. فایل را کنار raffle.html بگذارید.', false);
+        if (folderRow) folderRow.hidden = false;
+      });
+  }
+
+  function saveConfettiSettings(){
+    var payload = JSON.stringify(readConfettiSettings(), null, 2);
+    try { localStorage.setItem('raffle-confetti', payload); } catch (e) {}
+    return writeDirFile('confetti.json', payload);
+  }
+
+  function setSrcHint(text, ok){
+    if (!srcHint) return;
+    srcHint.innerHTML = text;
+    srcHint.style.color = ok === false ? 'var(--cta-deep)' : (ok === true ? 'var(--ok)' : '');
+  }
+
+  function refreshNumberCount(){
+    var nums = parseNumbers(numbersInput.value);
+    numCount.textContent = toPersianDigits(nums.length);
+  }
+
+  function tryFetchFiles(){
+    return fetch('confetti.json', { cache: 'no-store' })
+      .then(function(res){
+        if (!res.ok) throw new Error('no confetti');
+        return res.json();
+      })
+      .then(function(data){ applyConfettiSettings(data); })
+      .catch(applyCachedConfetti)
+      .then(function(){
+        return fetch('src.txt', { cache: 'no-store' }).then(function(res){
+          if (!res.ok) throw new Error('no src');
+          return res.text();
+        });
+      })
+      .then(applySrcText)
+      .then(function(){ return true; })
+      .catch(function(){ return false; });
+  }
+
+  function promptConnectFolder(){
+    if (folderRow) folderRow.hidden = false;
+    if (connectFolderBtn){
+      connectFolderBtn.textContent = window.showDirectoryPicker
+        ? 'اتصال به پوشه فایل‌ها'
+        : 'انتخاب src.txt';
+    }
+    setSrcHint('یک‌بار پوشه همین فایل را انتخاب کنید تا <b>src.txt</b> خوانده و <b>confetti.json</b> ذخیره شود.', false);
+  }
+
+  function restoreDirectoryHandle(){
+    if (!window.showDirectoryPicker) return Promise.resolve(false);
+    return idbGetHandle().then(function(handle){
+      if (!handle || typeof handle.queryPermission !== 'function') return false;
+      return handle.queryPermission({ mode: 'readwrite' }).then(function(state){
+        if (state !== 'granted') return false;
+        return loadFromDirectory(handle).then(function(){ return true; });
+      });
+    }).catch(function(){ return false; });
+  }
+
+  function connectFolder(){
+    if (!window.showDirectoryPicker){
+      if (srcFileInput) srcFileInput.click();
+      return;
+    }
+    window.showDirectoryPicker({ id: 'carno-raffle', mode: 'readwrite' })
+      .then(function(handle){
+        return idbSetHandle(handle).then(function(){ return loadFromDirectory(handle); });
+      })
+      .catch(function(){});
+  }
+
+  function initLocalFiles(){
+    restoreDirectoryHandle().then(function(ok){
+      if (ok) return;
+      return tryFetchFiles().then(function(fetched){
+        if (!fetched) promptConnectFolder();
+      });
+    });
+  }
+
+  function updateConfettiLabels(){
+    var s = readConfettiSettings();
+    if (confettiCountVal) confettiCountVal.textContent = formatSetting(s.count);
+    if (confettiStaggerVal) confettiStaggerVal.textContent = formatSetting(s.stagger) + 'ms';
+    if (confettiGravityVal) confettiGravityVal.textContent = formatSetting(s.gravity);
+    if (confettiTicksVal) confettiTicksVal.textContent = formatSetting(s.ticks);
+    if (confettiScalarVal) confettiScalarVal.textContent = formatSetting(s.scalar);
+  }
+
+  function clearConfettiTimers(){
+    confettiTimers.forEach(function(id){ clearTimeout(id); });
+    confettiTimers = [];
+  }
+
+  function burstConfetti(force){
+    var fire = window.confetti;
+    if (typeof fire !== 'function') return;
+
+    var settings = readConfettiSettings();
+    if (!settings.enabled && !force) return;
+
+    clearConfettiTimers();
+
+    var activeIndex = 0;
+    settings.bursts.forEach(function(burst){
+      if (!burst.enabled || burst.ratio <= 0) return;
+      var delay = activeIndex * (settings.stagger || 0);
+      activeIndex += 1;
+      var count = Math.max(1, Math.floor(settings.count * burst.ratio));
+      var options = {
+        origin: {
+          x: burst.originX != null ? burst.originX : 0.5,
+          y: burst.originY != null ? burst.originY : 0.5
+        },
+        angle: 90,
+        gravity: settings.gravity,
+        ticks: settings.ticks,
+        colors: settings.colors,
+        shapes: settings.shapes,
+        zIndex: 200,
+        disableForReducedMotion: true,
+        count: count,
+        particleCount: count,
+        spread: burst.spread || 360,
+        scalar: burst.scalar != null ? burst.scalar : settings.scalar
+      };
+      if (burst.startVelocity != null) options.startVelocity = burst.startVelocity;
+      if (burst.decay != null) options.decay = burst.decay;
+
+      if (delay <= 0) {
+        fire(options);
+      } else {
+        confettiTimers.push(setTimeout(function(){ fire(options); }, delay));
+      }
+    });
+  }
+
+  [confettiCount, confettiStagger, confettiGravity, confettiTicks, confettiScalar].forEach(function(el){
+    if (!el) return;
+    el.addEventListener('input', function(){
+      updateConfettiLabels();
+      scheduleConfettiSave();
+    });
+  });
+  if (confettiEnabled) confettiEnabled.addEventListener('change', scheduleConfettiSave);
+  if (confettiColors){
+    confettiColors.addEventListener('input', scheduleConfettiSave);
+    confettiColors.addEventListener('change', scheduleConfettiSave);
+  }
+  document.querySelectorAll('.confetti-shape').forEach(function(el){
+    el.addEventListener('change', scheduleConfettiSave);
+  });
+  if (themeToggleBtn) themeToggleBtn.addEventListener('click', toggleTheme);
+  if (connectFolderBtn) connectFolderBtn.addEventListener('click', connectFolder);
+  if (srcFileInput){
+    srcFileInput.addEventListener('change', function(){
+      var file = srcFileInput.files && srcFileInput.files[0];
+      if (!file) return;
+      var reader = new FileReader();
+      reader.onload = function(){ applySrcText(String(reader.result || '')); };
+      reader.readAsText(file);
+    });
+  }
+  if (confettiPreviewBtn){
+    confettiPreviewBtn.addEventListener('click', function(){ burstConfetti(true); });
+  }
+  if (confettiAddBurstBtn){
+    confettiAddBurstBtn.addEventListener('click', function(){
+      var bursts = readBurstSettings();
+      bursts.push(Object.assign({}, DEFAULT_BURST));
+      renderBurstRows(bursts);
+      scheduleConfettiSave();
+    });
+  }
+  if (confettiResetBtn){
+    confettiResetBtn.addEventListener('click', function(){
+      if (confettiEnabled) confettiEnabled.checked = true;
+      if (confettiCount) confettiCount.value = '200';
+      if (confettiStagger) confettiStagger.value = '450';
+      if (confettiGravity) confettiGravity.value = '0.8';
+      if (confettiTicks) confettiTicks.value = '300';
+      if (confettiScalar) confettiScalar.value = '1';
+      if (confettiColors) confettiColors.value = '#ed1c24, #C8922A, #FFD27A, #2d2c74, #ffffff, #ff6b70';
+      document.querySelectorAll('.confetti-shape').forEach(function(el){
+        el.checked = (el.value === 'square' || el.value === 'circle');
+      });
+      renderBurstRows(DEFAULT_CONFETTI_BURSTS.map(function(b){ return Object.assign({}, b); }));
+      updateConfettiLabels();
+      scheduleConfettiSave();
+    });
+  }
+
+  var toPersianDigits = function(str){
+    var map = {'0':'۰','1':'۱','2':'۲','3':'۳','4':'۴','5':'۵','6':'۶','7':'۷','8':'۸','9':'۹'};
+    return String(str).replace(/[0-9]/g, function(d){ return map[d]; });
+  };
+
+  renderBurstRows(DEFAULT_CONFETTI_BURSTS);
+  updateConfettiLabels();
+  applyTheme(currentTheme, false);
+  initLocalFiles();
+
+  // ---------- Default prizes ----------
+  var defaultPrizes = ["دیاگ کارمن نیولایت پلاس"];
+
+  function renderPrizeRows(){
+    prizesList.innerHTML = '';
+    defaultPrizes.forEach(function(name, idx){
+      addPrizeRow(name);
+    });
+  }
+
+  function addPrizeRow(value){
+    var row = document.createElement('div');
+    row.className = 'prize-row';
+
+    var input = document.createElement('input');
+    input.type = 'text';
+    input.value = value || '';
+    input.placeholder = 'نام جایزه';
+
+    var removeBtn = document.createElement('button');
+    removeBtn.type = 'button';
+    removeBtn.className = 'icon-btn';
+    removeBtn.title = 'حذف این جایزه';
+    removeBtn.innerHTML = '×';
+    removeBtn.addEventListener('click', function(){
+      row.remove();
+    });
+
+    row.appendChild(input);
+    row.appendChild(removeBtn);
+    prizesList.appendChild(row);
+  }
+
+  addPrizeBtn.addEventListener('click', function(){
+    addPrizeRow('');
+  });
+
+  renderPrizeRows();
+
+  // ---------- Live number count ----------
+  function parseNumbers(raw){
+    return raw
+      .split('\n')
+      .map(function(s){ return s.trim(); })
+      .filter(function(s){ return s.length > 0; });
+  }
+
+  numbersInput.addEventListener('input', refreshNumberCount);
+
+  // ---------- Start show ----------
+  function showError(msg){
+    setupError.textContent = msg;
+    setupError.style.display = 'block';
+  }
+  function hideError(){
+    setupError.style.display = 'none';
+  }
+
+  startShowBtn.addEventListener('click', function(){
+    hideError();
+
+    var rawNumbers = parseNumbers(numbersInput.value);
+    var uniqueNumbers = Array.from(new Set(rawNumbers));
+
+    var prizeInputs = prizesList.querySelectorAll('input');
+    var prizeNames = Array.prototype.map.call(prizeInputs, function(i){ return i.value.trim(); })
+      .filter(function(v){ return v.length > 0; });
+
+    if (uniqueNumbers.length === 0){
+      showError('حداقل یک شماره باید وارد شود.');
+      return;
+    }
+    if (prizeNames.length === 0){
+      showError('حداقل یک جایزه باید تعریف شود.');
+      return;
+    }
+    if (uniqueNumbers.length < prizeNames.length){
+      showError('تعداد شماره‌ها (' + uniqueNumbers.length + ') کمتر از تعداد جوایز (' + prizeNames.length + ') است.');
+      return;
+    }
+
+    pool = uniqueNumbers;
+    prizes = prizeNames;
+    currentPrizeIndex = 0;
+    winners = [];
+
+    setupView.hidden = true;
+    stageView.hidden = false;
+    summaryView.hidden = true;
+    document.body.classList.add('is-stage');
+
+    renderStageForCurrentPrize();
+  });
+
+  // ---------- Stage logic ----------
+  function hasMultiplePrizes(){
+    return prizes.length > 1;
+  }
+
+  function renderStageForCurrentPrize(){
+    progressTag.hidden = !hasMultiplePrizes();
+    progressTag.textContent = 'جایزه ' + toPersianDigits(currentPrizeIndex + 1) + ' از ' + toPersianDigits(prizes.length);
+    currentPrizeName.textContent = prizes[currentPrizeIndex];
+
+    digitsDisplay.textContent = '— — — —';
+    digitsDisplay.classList.remove('revealed');
+    digitsDisplay.classList.add('idle');
+    readoutBox.classList.remove('winner');
+    numberUnmasked = false;
+    revealEyeBtn.hidden = true;
+    setEyeIcon(false);
+
+    statusDot.classList.remove('live','done');
+    statusText.textContent = 'آماده برای شروع';
+
+    drawBtn.hidden = false;
+    drawBtn.disabled = false;
+    drawBtn.textContent = 'شروع قرعه‌کشی';
+    nextBtn.hidden = true;
+
+    remainingNote.textContent = 'تعداد شرکت‌کننده‌های باقی‌مانده در این مرحله: ' + toPersianDigits(pool.length);
+
+    renderWinnersLog();
+  }
+
+  function renderWinnersLog(){
+    if (winners.length === 0 || !hasMultiplePrizes()){
+      winnersLog.hidden = true;
+      return;
+    }
+    winnersLog.hidden = false;
+    winnersLogList.innerHTML = '';
+    winners.forEach(function(w){
+      var item = document.createElement('div');
+      item.className = 'winner-item';
+      var numSpan = document.createElement('span');
+      numSpan.className = 'num';
+      numSpan.textContent = maskDigits567(w.number);
+      var labelSpan = document.createElement('span');
+      labelSpan.className = 'label';
+      labelSpan.textContent = w.prize;
+      item.appendChild(labelSpan);
+      item.appendChild(numSpan);
+      winnersLogList.appendChild(item);
+    });
+  }
+
+  function secureRandomIndex(n){
+    if (window.crypto && window.crypto.getRandomValues){
+      var arr = new Uint32Array(1);
+      window.crypto.getRandomValues(arr);
+      return arr[0] % n;
+    }
+    return Math.floor(Math.random() * n);
+  }
+
+  var spinTimer = null;
+
+  drawBtn.addEventListener('click', function(){
+    if (drawing || pool.length === 0) return;
+    drawing = true;
+    drawBtn.disabled = true;
+
+    statusDot.classList.add('live');
+    statusDot.classList.remove('done');
+    statusText.textContent = 'در حال کشیدن قرعه...';
+    digitsDisplay.classList.remove('idle');
+
+    // pick the real winner up-front; animation is purely visual suspense
+    var winnerIdx = secureRandomIndex(pool.length);
+    var winnerNumber = pool[winnerIdx];
+    pendingWinner = { idx: winnerIdx, number: winnerNumber };
+
+    var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    if (reduceMotion){
+      finishDraw();
+      return;
+    }
+
+    var ticks = 0;
+    var spinDuration = 5000; // total spin time in ms
+    var minDelay = 50;       // fastest interval, at the start
+    var maxDelay = 260;      // slowest interval, just before reveal
+    var startTs = Date.now();
+
+    function tick(){
+      ticks++;
+      var randomPick = pool[Math.floor(Math.random() * pool.length)];
+      digitsDisplay.textContent = maskMiddle(randomPick);
+
+      var elapsed = Date.now() - startTs;
+      if (elapsed >= spinDuration){
+        finishDraw();
+        return;
+      }
+      // ease-out: delay grows quadratically as we approach spinDuration
+      var progress = elapsed / spinDuration;
+      var nextDelay = minDelay + (maxDelay - minDelay) * Math.pow(progress, 2);
+      spinTimer = setTimeout(tick, nextDelay);
+    }
+    tick();
+  });
+
+  function finishDraw(){
+    numberUnmasked = false;
+    digitsDisplay.classList.remove('idle');
+    digitsDisplay.classList.add('revealed');
+    readoutBox.classList.add('winner');
+    revealEyeBtn.hidden = false;
+    showWinnerNumber();
+    burstConfetti();
+
+    statusDot.classList.remove('live');
+    statusDot.classList.add('done');
+    statusText.textContent = 'برنده مشخص شد!';
+
+    // remove winner from pool so it cannot be drawn again
+    pool.splice(pendingWinner.idx, 1);
+    winners.push({ prize: prizes[currentPrizeIndex], number: pendingWinner.number });
+
+    drawBtn.hidden = true;
+    nextBtn.hidden = !hasMultiplePrizes();
+    drawing = false;
+
+    remainingNote.textContent = 'تعداد شرکت‌کننده‌های باقی‌مانده برای مراحل بعد: ' + toPersianDigits(pool.length);
+    renderWinnersLog();
+  }
+
+  revealEyeBtn.addEventListener('click', function(){
+    if (!pendingWinner) return;
+    numberUnmasked = !numberUnmasked;
+    showWinnerNumber();
+  });
+
+  nextBtn.addEventListener('click', function(){
+    currentPrizeIndex++;
+    if (currentPrizeIndex >= prizes.length){
+      showSummary();
+    } else {
+      renderStageForCurrentPrize();
+    }
+  });
+
+  // ---------- Summary ----------
+  function showSummary(){
+    stageView.hidden = true;
+    summaryView.hidden = false;
+    document.body.classList.remove('is-stage');
+
+    summaryList.innerHTML = '';
+    winners.forEach(function(w){
+      var row = document.createElement('div');
+      row.className = 'summary-row';
+      var prizeSpan = document.createElement('span');
+      prizeSpan.className = 'prize';
+      prizeSpan.textContent = w.prize;
+      var numSpan = document.createElement('span');
+      numSpan.className = 'num';
+      numSpan.textContent = w.number;
+      row.appendChild(prizeSpan);
+      row.appendChild(numSpan);
+      summaryList.appendChild(row);
+    });
+  }
+
+  restartBtn.addEventListener('click', function(){
+    pool = [];
+    prizes = [];
+    currentPrizeIndex = 0;
+    winners = [];
+    renderPrizeRows();
+    if (dirHandle) loadFromDirectory(dirHandle);
+    else initLocalFiles();
+
+    summaryView.hidden = true;
+    stageView.hidden = true;
+    setupView.hidden = false;
+    document.body.classList.remove('is-stage');
+  });
+
+})();
+</script>
+</body>
+</html>

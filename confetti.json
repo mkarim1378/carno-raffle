@@ -1,0 +1,83 @@
+{
+  "theme": "dark",
+  "enabled": true,
+  "count": 500,
+  "stagger": 750,
+  "gravity": 0.7,
+  "ticks": 800,
+  "scalar": 1.4,
+  "colors": [
+    "#ed1c24",
+    "#C8922A",
+    "#FFD27A",
+    "#2d2c74",
+    "#ffffff",
+    "#ff6b70"
+  ],
+  "shapes": [
+    "square",
+    "circle"
+  ],
+  "bursts": [
+    {
+      "enabled": true,
+      "ratio": 0.75,
+      "spread": 360,
+      "startVelocity": 48,
+      "decay": 0.91,
+      "scalar": 1,
+      "originX": 0.5,
+      "originY": 0.42
+    },
+    {
+      "enabled": true,
+      "ratio": 0.55,
+      "spread": 360,
+      "startVelocity": 42,
+      "decay": 0.9,
+      "scalar": 0.9,
+      "originX": 0.18,
+      "originY": 0.3
+    },
+    {
+      "enabled": true,
+      "ratio": 0.55,
+      "spread": 360,
+      "startVelocity": 42,
+      "decay": 0.9,
+      "scalar": 0.9,
+      "originX": 0.82,
+      "originY": 0.3
+    },
+    {
+      "enabled": true,
+      "ratio": 0.6,
+      "spread": 360,
+      "startVelocity": 50,
+      "decay": 0.92,
+      "scalar": 1.05,
+      "originX": 0.28,
+      "originY": 0.62
+    },
+    {
+      "enabled": true,
+      "ratio": 0.75,
+      "spread": 360,
+      "startVelocity": 50,
+      "decay": 0.92,
+      "scalar": 1.05,
+      "originX": 0.72,
+      "originY": 0.62
+    },
+    {
+      "enabled": true,
+      "ratio": 0.95,
+      "spread": 360,
+      "startVelocity": 55,
+      "decay": 0.91,
+      "scalar": 1.15,
+      "originX": 0.5,
+      "originY": 0.2
+    }
+  ]
+}
