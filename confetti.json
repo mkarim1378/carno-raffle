@@ -1,5 +1,7 @@
 {
   "theme": "dark",
+  "drawDurationSec": 15,
+  "prizes": [],
   "enabled": true,
   "count": 500,
   "stagger": 750,

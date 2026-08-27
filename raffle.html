@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>سیستم قرعه‌کشی | آکادمی کارنو</title>
+<title>مرحله دوم قرعه‌کشی بزرگ | آکادمی کارنو</title>
 <link rel="preload" href="PeydaWebVF.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="logo-color.webp" as="image">
 <link rel="preload" href="logo-white.webp" as="image">
@@ -186,6 +186,59 @@
   }
   header h1 .hl{ color:var(--brand); }
   header h1 .hl-gold{ color:#ed1c24; }
+  .round-banner{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:12px;
+    margin:18px auto 0;
+    padding:12px 22px;
+    border-radius:14px;
+    background:linear-gradient(135deg, rgba(237,28,36,.12), rgba(200,146,42,.14));
+    border:1.5px solid rgba(237,28,36,.35);
+    box-shadow:0 10px 28px -16px rgba(237,28,36,.45);
+  }
+  html[data-theme="dark"] .round-banner{
+    background:linear-gradient(135deg, rgba(237,28,36,.22), rgba(200,146,42,.14));
+    border-color:rgba(255,210,122,.35);
+  }
+  .round-banner .round-kicker{
+    font-size:35px;
+    font-weight:800;
+    color:var(--ink-2);
+    letter-spacing:.2px;
+  }
+  .round-banner .round-digit{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    min-width:42px;
+    height:42px;
+    padding:0 10px;
+    border-radius:11px;
+    background:linear-gradient(180deg,#ff3b42,var(--cta));
+    color:#fff;
+    font-size:24px;
+    font-weight:900;
+    line-height:1;
+    box-shadow:0 8px 18px -8px rgba(237,28,36,.7);
+  }
+  .round-banner .round-text{
+    font-size:35px;
+    font-weight:900;
+    color:var(--cta);
+    letter-spacing:-.3px;
+  }
+  body.is-stage .round-banner{
+    margin-top:14px;
+    padding:10px 18px;
+  }
+  body.is-stage .round-banner .round-digit{
+    min-width:36px;
+    height:36px;
+    font-size:20px;
+  }
+  body.is-stage .round-banner .round-text{ font-size:35px; }
 
   .panel{
     background:var(--card);
@@ -210,7 +263,7 @@
     line-height:1.7;
   }
 
-  textarea, input[type="text"]{
+  textarea, input[type="text"], input[type="number"]{
     width:100%;
     font-family:inherit;
     font-size:15px;
@@ -230,11 +283,31 @@
     direction:ltr;
     text-align:left;
   }
-  textarea:focus, input[type="text"]:focus, button:focus-visible{
+  textarea:focus, input[type="text"]:focus, input[type="number"]:focus, button:focus-visible{
     border-color:var(--brand);
     background:var(--card);
     outline:none;
     box-shadow:0 0 0 3px var(--focus-ring);
+  }
+  .duration-row{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    max-width:220px;
+  }
+  .duration-row input[type="number"]{
+    flex:1;
+    min-width:0;
+    direction:ltr;
+    text-align:center;
+    font-variant-numeric:tabular-nums;
+    font-weight:700;
+  }
+  .duration-unit{
+    font-size:14.5px;
+    font-weight:700;
+    color:var(--ink-2);
+    flex-shrink:0;
   }
   button:focus-visible{
     outline:2px solid var(--brand);
@@ -785,6 +858,9 @@
     .panel{ padding:20px 18px; }
     header .logo{ height:96px; }
     header h1{ font-size:32px; }
+    .round-banner{ margin-top:14px; padding:10px 16px; gap:10px; }
+    .round-banner .round-digit{ min-width:36px; height:36px; font-size:20px; }
+    .round-banner .round-text{ font-size:18px; }
     .prize-name{ font-size:28px; }
     .digits{ font-size:36px; letter-spacing:2px; }
     .readout{ padding:40px 14px 36px; }
@@ -820,8 +896,12 @@
       <img class="logo logo-dark" src="logo-white.webp" alt="آکادمی کارنو" height="126">
       <span class="brand-name">آکادمی کارنو<small>مرجع تخصصی برق خودرو ایران</small></span>
     </div>
-    <span class="eyebrow"><span class="num">●</span> قرعه‌کشی زنده</span>
+    <span class="eyebrow"><span class="num">●</span> قرعه‌کشی زنده · مرحله دوم</span>
     <h1>قرعه‌کشی <span class="hl-gold">بزرگ</span> <span class="hl">آکادمی کارنو</span></h1>
+    <div class="round-banner" aria-label="مرحله دوم">
+      <span class="round-kicker">مرحله</span>
+      <span class="round-text">دوم</span>
+    </div>
   </header>
 
   <!-- ===================== SETUP VIEW ===================== -->
@@ -840,14 +920,23 @@
 
     <div class="panel">
       <label>لیست جوایز (به ترتیب کشیده می‌شوند)</label>
-      <p class="hint">می‌توانید نام جوایز را ویرایش کنید یا با دکمه زیر جایزه جدید اضافه کنید.</p>
+      <p class="hint">نام جوایز را از اینجا تنظیم کنید؛ مثل بقیه تنظیمات در <b>confetti.json</b> ذخیره می‌شود و با رفرش پاک نمی‌شود.</p>
       <div class="prizes-list" id="prizesList"></div>
-      <button class="add-prize-btn" id="addPrizeBtn">+ افزودن جایزه</button>
+      <button type="button" class="add-prize-btn" id="addPrizeBtn">+ افزودن جایزه</button>
+    </div>
+
+    <div class="panel">
+      <label for="drawDurationSec">مدت زمان قرعه‌کشی</label>
+      <p class="hint">از لحظه زدن دکمه «شروع قرعه‌کشی» تا نمایش شماره برنده. مقدار را به ثانیه وارد کنید.</p>
+      <div class="duration-row">
+        <input type="number" id="drawDurationSec" min="1" max="120" step="1" value="5" inputmode="numeric">
+        <span class="duration-unit">ثانیه</span>
+      </div>
     </div>
 
     <div class="panel">
       <label>افکت confetti بعد از اعلام برنده</label>
-      <p class="hint">انفجارهای دایره‌ای در نقاط مختلف صفحه. تنظیمات در فایل <b>confetti.json</b> کنار همین صفحه ذخیره می‌شود.</p>
+      <p class="hint">انفجارهای دایره‌ای در نقاط مختلف صفحه. بعد از اعلام برنده افکت به‌صورت مداوم تکرار می‌شود و قطع نمی‌شود. تنظیمات در فایل <b>confetti.json</b> کنار همین صفحه ذخیره می‌شود.</p>
       <label class="toggle-row">
         <input type="checkbox" id="confettiEnabled" checked>
         افکت فعال باشد
@@ -936,9 +1025,9 @@
   <!-- ===================== SUMMARY VIEW ===================== -->
   <main id="summaryView" hidden>
     <div class="panel summary-card">
-      <span class="eyebrow"><span class="num">●</span> نتیجه نهایی</span>
-      <h2>برندگان قرعه‌کشی مشخص شدند</h2>
-      <p class="lead">لیست کامل جوایز و شماره‌های برنده</p>
+      <span class="eyebrow"><span class="num">●</span> نتیجه نهایی · مرحله دوم</span>
+      <h2>برندگان مرحله دوم مشخص شدند</h2>
+      <p class="lead">لیست کامل جوایز و شماره‌های برنده قرعه‌کشی بزرگ آکادمی کارنو</p>
       <div class="summary-list" id="summaryList"></div>
       <button class="btn btn-secondary" id="restartBtn">شروع یک قرعه‌کشی جدید</button>
     </div>
@@ -993,6 +1082,7 @@
   var summaryList = document.getElementById('summaryList');
   var restartBtn = document.getElementById('restartBtn');
 
+  var drawDurationSec = document.getElementById('drawDurationSec');
   var confettiEnabled = document.getElementById('confettiEnabled');
   var confettiCount = document.getElementById('confettiCount');
   var confettiStagger = document.getElementById('confettiStagger');
@@ -1012,6 +1102,7 @@
   var confettiTimers = [];
   var confettiSaveTimer = null;
   var confettiHydrating = false;
+  var confettiLooping = false;
   var dirHandle = null;
   var currentTheme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
 
@@ -1156,6 +1247,8 @@
 
     return {
       theme: currentTheme,
+      drawDurationSec: getDrawDurationSec(),
+      prizes: readPrizeNames(),
       enabled: !!(confettiEnabled && confettiEnabled.checked),
       count: confettiCount ? parseInt(confettiCount.value, 10) : 200,
       stagger: confettiStagger ? parseInt(confettiStagger.value, 10) : 450,
@@ -1168,10 +1261,76 @@
     };
   }
 
+  function readPrizeNames(){
+    if (!prizesList) return [];
+    return Array.prototype.map.call(prizesList.querySelectorAll('.prize-row input'), function(input){
+      return input.value.trim();
+    }).filter(function(name){ return name.length > 0; });
+  }
+
+  function renderPrizeRows(names){
+    if (!prizesList) return;
+    prizesList.innerHTML = '';
+    var list = Array.isArray(names) ? names.filter(function(n){ return String(n || '').trim().length > 0; }) : [];
+    if (list.length === 0) list = [''];
+    list.forEach(function(name){ addPrizeRow(name); });
+  }
+
+  function addPrizeRow(value){
+    if (!prizesList) return;
+    var row = document.createElement('div');
+    row.className = 'prize-row';
+
+    var input = document.createElement('input');
+    input.type = 'text';
+    input.value = value || '';
+    input.placeholder = 'نام جایزه';
+    input.addEventListener('input', scheduleConfettiSave);
+    input.addEventListener('change', scheduleConfettiSave);
+
+    var removeBtn = document.createElement('button');
+    removeBtn.type = 'button';
+    removeBtn.className = 'icon-btn';
+    removeBtn.title = 'حذف این جایزه';
+    removeBtn.setAttribute('aria-label', 'حذف این جایزه');
+    removeBtn.innerHTML = '×';
+    removeBtn.addEventListener('click', function(){
+      row.remove();
+      if (!prizesList.querySelector('.prize-row')) addPrizeRow('');
+      scheduleConfettiSave();
+    });
+
+    row.appendChild(input);
+    row.appendChild(removeBtn);
+    prizesList.appendChild(row);
+  }
+
+  function getDrawDurationSec(){
+    return getDrawDurationSecFromValue(drawDurationSec ? drawDurationSec.value : 5);
+  }
+
+  function getDrawDurationSecFromValue(value){
+    var sec = parseFloat(value);
+    if (!isFinite(sec)) sec = 5;
+    if (sec < 1) sec = 1;
+    if (sec > 120) sec = 120;
+    return Math.round(sec);
+  }
+
+  function getDrawDurationMs(){
+    return getDrawDurationSec() * 1000;
+  }
+
   function applyConfettiSettings(s){
     if (!s || typeof s !== 'object') return;
     confettiHydrating = true;
     if (s.theme === 'dark' || s.theme === 'light') applyTheme(s.theme, false);
+    if (drawDurationSec && s.drawDurationSec != null){
+      drawDurationSec.value = String(getDrawDurationSecFromValue(s.drawDurationSec));
+    }
+    if (Array.isArray(s.prizes)){
+      renderPrizeRows(s.prizes);
+    }
     if (confettiEnabled) confettiEnabled.checked = s.enabled !== false;
     if (confettiCount && s.count != null) confettiCount.value = String(s.count);
     if (confettiStagger && s.stagger != null) confettiStagger.value = String(s.stagger);
@@ -1384,47 +1543,82 @@
     confettiTimers = [];
   }
 
-  function burstConfetti(force){
+  function stopConfetti(){
+    confettiLooping = false;
+    clearConfettiTimers();
+    try {
+      if (window.confetti && typeof window.confetti.reset === 'function'){
+        window.confetti.reset();
+      }
+    } catch (e) {}
+  }
+
+  function burstConfetti(force, options){
+    options = options || {};
+    var loop = !!options.loop;
     var fire = window.confetti;
     if (typeof fire !== 'function') return;
 
     var settings = readConfettiSettings();
     if (!settings.enabled && !force) return;
 
-    clearConfettiTimers();
+    stopConfetti();
+    confettiLooping = loop;
 
-    var activeIndex = 0;
-    settings.bursts.forEach(function(burst){
-      if (!burst.enabled || burst.ratio <= 0) return;
-      var delay = activeIndex * (settings.stagger || 0);
-      activeIndex += 1;
-      var count = Math.max(1, Math.floor(settings.count * burst.ratio));
-      var options = {
-        origin: {
-          x: burst.originX != null ? burst.originX : 0.5,
-          y: burst.originY != null ? burst.originY : 0.5
-        },
-        angle: 90,
-        gravity: settings.gravity,
-        ticks: settings.ticks,
-        colors: settings.colors,
-        shapes: settings.shapes,
-        zIndex: 200,
-        disableForReducedMotion: true,
-        count: count,
-        particleCount: count,
-        spread: burst.spread || 360,
-        scalar: burst.scalar != null ? burst.scalar : settings.scalar
-      };
-      if (burst.startVelocity != null) options.startVelocity = burst.startVelocity;
-      if (burst.decay != null) options.decay = burst.decay;
+    function runWave(){
+      if (loop && !confettiLooping) return;
 
-      if (delay <= 0) {
-        fire(options);
-      } else {
-        confettiTimers.push(setTimeout(function(){ fire(options); }, delay));
+      settings = readConfettiSettings();
+      if (!settings.enabled && !force){
+        confettiLooping = false;
+        return;
       }
-    });
+
+      var activeIndex = 0;
+      settings.bursts.forEach(function(burst){
+        if (!burst.enabled || burst.ratio <= 0) return;
+        var delay = activeIndex * (settings.stagger || 0);
+        activeIndex += 1;
+        var count = Math.max(1, Math.floor(settings.count * burst.ratio));
+        var burstOptions = {
+          origin: {
+            x: burst.originX != null ? burst.originX : 0.5,
+            y: burst.originY != null ? burst.originY : 0.5
+          },
+          angle: 90,
+          gravity: settings.gravity,
+          ticks: settings.ticks,
+          colors: settings.colors,
+          shapes: settings.shapes,
+          zIndex: 200,
+          disableForReducedMotion: true,
+          count: count,
+          particleCount: count,
+          spread: burst.spread || 360,
+          scalar: burst.scalar != null ? burst.scalar : settings.scalar
+        };
+        if (burst.startVelocity != null) burstOptions.startVelocity = burst.startVelocity;
+        if (burst.decay != null) burstOptions.decay = burst.decay;
+
+        if (delay <= 0) {
+          fire(burstOptions);
+        } else {
+          confettiTimers.push(setTimeout(function(){
+            if (loop && !confettiLooping) return;
+            fire(burstOptions);
+          }, delay));
+        }
+      });
+
+      if (!loop || !confettiLooping || activeIndex === 0) return;
+
+      var stagger = settings.stagger || 0;
+      var pause = Math.max(700, stagger);
+      var nextIn = activeIndex * stagger + pause;
+      confettiTimers.push(setTimeout(runWave, nextIn));
+    }
+
+    runWave();
   }
 
   [confettiCount, confettiStagger, confettiGravity, confettiTicks, confettiScalar].forEach(function(el){
@@ -1434,6 +1628,13 @@
       scheduleConfettiSave();
     });
   });
+  if (drawDurationSec){
+    drawDurationSec.addEventListener('input', scheduleConfettiSave);
+    drawDurationSec.addEventListener('change', function(){
+      drawDurationSec.value = String(getDrawDurationSec());
+      scheduleConfettiSave();
+    });
+  }
   if (confettiEnabled) confettiEnabled.addEventListener('change', scheduleConfettiSave);
   if (confettiColors){
     confettiColors.addEventListener('input', scheduleConfettiSave);
@@ -1490,46 +1691,16 @@
   renderBurstRows(DEFAULT_CONFETTI_BURSTS);
   updateConfettiLabels();
   applyTheme(currentTheme, false);
+  renderPrizeRows(['']);
+  if (addPrizeBtn){
+    addPrizeBtn.addEventListener('click', function(){
+      addPrizeRow('');
+      scheduleConfettiSave();
+      var inputs = prizesList.querySelectorAll('.prize-row input');
+      if (inputs.length) inputs[inputs.length - 1].focus();
+    });
+  }
   initLocalFiles();
-
-  // ---------- Default prizes ----------
-  var defaultPrizes = ["دیاگ کارمن نیولایت پلاس"];
-
-  function renderPrizeRows(){
-    prizesList.innerHTML = '';
-    defaultPrizes.forEach(function(name, idx){
-      addPrizeRow(name);
-    });
-  }
-
-  function addPrizeRow(value){
-    var row = document.createElement('div');
-    row.className = 'prize-row';
-
-    var input = document.createElement('input');
-    input.type = 'text';
-    input.value = value || '';
-    input.placeholder = 'نام جایزه';
-
-    var removeBtn = document.createElement('button');
-    removeBtn.type = 'button';
-    removeBtn.className = 'icon-btn';
-    removeBtn.title = 'حذف این جایزه';
-    removeBtn.innerHTML = '×';
-    removeBtn.addEventListener('click', function(){
-      row.remove();
-    });
-
-    row.appendChild(input);
-    row.appendChild(removeBtn);
-    prizesList.appendChild(row);
-  }
-
-  addPrizeBtn.addEventListener('click', function(){
-    addPrizeRow('');
-  });
-
-  renderPrizeRows();
 
   // ---------- Live number count ----------
   function parseNumbers(raw){
@@ -1592,6 +1763,7 @@
   }
 
   function renderStageForCurrentPrize(){
+    stopConfetti();
     progressTag.hidden = !hasMultiplePrizes();
     progressTag.textContent = 'جایزه ' + toPersianDigits(currentPrizeIndex + 1) + ' از ' + toPersianDigits(prizes.length);
     currentPrizeName.textContent = prizes[currentPrizeIndex];
@@ -1673,7 +1845,7 @@
     }
 
     var ticks = 0;
-    var spinDuration = 5000; // total spin time in ms
+    var spinDuration = getDrawDurationMs(); // total spin time in ms (from settings)
     var minDelay = 50;       // fastest interval, at the start
     var maxDelay = 260;      // slowest interval, just before reveal
     var startTs = Date.now();
@@ -1703,7 +1875,7 @@
     readoutBox.classList.add('winner');
     revealEyeBtn.hidden = false;
     showWinnerNumber();
-    burstConfetti();
+    burstConfetti(false, { loop: true });
 
     statusDot.classList.remove('live');
     statusDot.classList.add('done');
@@ -1738,6 +1910,7 @@
 
   // ---------- Summary ----------
   function showSummary(){
+    stopConfetti();
     stageView.hidden = true;
     summaryView.hidden = false;
     document.body.classList.remove('is-stage');
@@ -1759,11 +1932,11 @@
   }
 
   restartBtn.addEventListener('click', function(){
+    stopConfetti();
     pool = [];
     prizes = [];
     currentPrizeIndex = 0;
     winners = [];
-    renderPrizeRows();
     if (dirHandle) loadFromDirectory(dirHandle);
     else initLocalFiles();
 
