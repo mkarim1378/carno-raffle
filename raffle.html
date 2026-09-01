@@ -654,10 +654,8 @@
   }
   .reveal-eye.is-open{ color:rgba(255,255,255,.28); }
 
-  .theme-toggle{
+  .corner-tool{
     position:fixed;
-    top:12px;
-    left:12px;
     z-index:80;
     width:22px;
     height:22px;
@@ -671,18 +669,26 @@
     place-items:center;
     transition:color .2s, background .2s;
   }
-  html[data-theme="dark"] .theme-toggle{ color:rgba(255,255,255,.12); }
-  .theme-toggle svg{ width:15px; height:15px; display:block; }
-  .theme-toggle:hover,
-  .theme-toggle:focus-visible{
+  html[data-theme="dark"] .corner-tool{ color:rgba(255,255,255,.12); }
+  .corner-tool svg{ width:15px; height:15px; display:block; }
+  .corner-tool:hover,
+  .corner-tool:focus-visible{
     color:rgba(20,23,30,.7);
     background:rgba(20,23,30,.06);
     outline:none;
   }
-  html[data-theme="dark"] .theme-toggle:hover,
-  html[data-theme="dark"] .theme-toggle:focus-visible{
+  html[data-theme="dark"] .corner-tool:hover,
+  html[data-theme="dark"] .corner-tool:focus-visible{
     color:rgba(255,255,255,.72);
     background:rgba(255,255,255,.08);
+  }
+  .theme-toggle{
+    top:12px;
+    left:12px;
+  }
+  .quick-next-draw{
+    top:12px;
+    right:12px;
   }
 
   .status-dot{
@@ -885,8 +891,11 @@
 </head>
 <body>
 
-<button type="button" class="theme-toggle" id="themeToggleBtn" aria-label="تغییر تم" title="">
+<button type="button" class="corner-tool theme-toggle" id="themeToggleBtn" aria-label="تغییر تم" title="">
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 14.5A8.5 8.5 0 1110.5 3 7 7 0 0021 14.5z"/></svg>
+</button>
+<button type="button" class="corner-tool quick-next-draw" id="quickNextDrawBtn" hidden aria-label="قرعه‌کشی نفر بعدی" title="قرعه‌کشی نفر بعدی">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/></svg>
 </button>
 
 <div class="app">
@@ -1057,6 +1066,7 @@
   var connectFolderBtn = document.getElementById('connectFolderBtn');
   var srcFileInput = document.getElementById('srcFileInput');
   var themeToggleBtn = document.getElementById('themeToggleBtn');
+  var quickNextDrawBtn = document.getElementById('quickNextDrawBtn');
   var prizesList = document.getElementById('prizesList');
   var addPrizeBtn = document.getElementById('addPrizeBtn');
   var startShowBtn = document.getElementById('startShowBtn');
@@ -1762,8 +1772,22 @@
     return prizes.length > 1;
   }
 
+  function canQuickDrawNext(){
+    return !stageView.hidden &&
+      !drawing &&
+      pendingWinner &&
+      currentPrizeIndex < prizes.length - 1 &&
+      pool.length > 0;
+  }
+
+  function updateQuickNextDrawBtn(){
+    if (!quickNextDrawBtn) return;
+    quickNextDrawBtn.hidden = !canQuickDrawNext();
+  }
+
   function renderStageForCurrentPrize(){
     stopConfetti();
+    pendingWinner = null;
     progressTag.hidden = !hasMultiplePrizes();
     progressTag.textContent = 'جایزه ' + toPersianDigits(currentPrizeIndex + 1) + ' از ' + toPersianDigits(prizes.length);
     currentPrizeName.textContent = prizes[currentPrizeIndex];
@@ -1787,6 +1811,7 @@
     remainingNote.textContent = 'تعداد شرکت‌کننده‌های باقی‌مانده در این مرحله: ' + toPersianDigits(pool.length);
 
     renderWinnersLog();
+    updateQuickNextDrawBtn();
   }
 
   function renderWinnersLog(){
@@ -1822,10 +1847,11 @@
 
   var spinTimer = null;
 
-  drawBtn.addEventListener('click', function(){
+  function startDraw(){
     if (drawing || pool.length === 0) return;
     drawing = true;
     drawBtn.disabled = true;
+    updateQuickNextDrawBtn();
 
     statusDot.classList.add('live');
     statusDot.classList.remove('done');
@@ -1866,7 +1892,24 @@
       spinTimer = setTimeout(tick, nextDelay);
     }
     tick();
-  });
+  }
+
+  drawBtn.addEventListener('click', startDraw);
+
+  function quickNextDraw(){
+    if (!canQuickDrawNext()) return;
+    if (spinTimer){
+      clearTimeout(spinTimer);
+      spinTimer = null;
+    }
+    currentPrizeIndex++;
+    renderStageForCurrentPrize();
+    startDraw();
+  }
+
+  if (quickNextDrawBtn){
+    quickNextDrawBtn.addEventListener('click', quickNextDraw);
+  }
 
   function finishDraw(){
     numberUnmasked = false;
@@ -1891,6 +1934,7 @@
 
     remainingNote.textContent = 'تعداد شرکت‌کننده‌های باقی‌مانده برای مراحل بعد: ' + toPersianDigits(pool.length);
     renderWinnersLog();
+    updateQuickNextDrawBtn();
   }
 
   revealEyeBtn.addEventListener('click', function(){
@@ -1914,6 +1958,7 @@
     stageView.hidden = true;
     summaryView.hidden = false;
     document.body.classList.remove('is-stage');
+    updateQuickNextDrawBtn();
 
     summaryList.innerHTML = '';
     winners.forEach(function(w){
@@ -1944,6 +1989,7 @@
     stageView.hidden = true;
     setupView.hidden = false;
     document.body.classList.remove('is-stage');
+    updateQuickNextDrawBtn();
   });
 
 })();
